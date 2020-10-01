@@ -152,8 +152,7 @@ mouse-3: Toggle minor modes"
                       'mouse-face 'mode-line-highlight
                       'local-map (make-mode-line-mouse-map
                                   'mouse-2 #'mode-line-widen))
-          `(:propertize ("" (:eval (seq-filter (pcase-lambda (`(,mode))
-                                                 (memq mode minions-direct))
+          `(:propertize ("" (:eval (seq-filter #'minions--filter-to-direct
                                                minor-mode-alist)))
 			mouse-face mode-line-highlight
 			help-echo "Minor mode
@@ -255,6 +254,9 @@ EVENT has to be an input event."
         (list 'menu-item (symbol-name mode) fn
               :help (minions--documentation fn)
               :button (cons :toggle mode))))))
+
+(defun minions--filter-to-direct (elt)
+  (memq (car elt) minions-direct))
 
 (defun minions--help-menu ()
   (pcase-let ((map (make-sparse-keymap))
